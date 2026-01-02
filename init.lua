@@ -9,11 +9,6 @@ vim.g.mapleader = " "
 -- Sync clipboard with OS
 vim.opt.clipboard = "unnamedplus"
 
-vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
-vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
-vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
-vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -35,7 +30,7 @@ local plugins = {
     "rebelot/kanagawa.nvim",
     lazy = false,
     priority = 1000,
-    config = function() 
+    config = function()
       vim.cmd("colorscheme kanagawa-dragon")
     end
   },
@@ -44,15 +39,15 @@ local plugins = {
     dependencies = {'nvim-lua/plenary.nvim', { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' }}
   },
   --Treesitter 
-  { 
-    "nvim-treesitter/nvim-treesitter", 
-    branch = 'master', 
-    lazy = false, 
+  {
+    "nvim-treesitter/nvim-treesitter",
+    branch = 'master',
+    lazy = false,
     build = ":TSUpdate",
     config = function()
-      local config = require("nvim-treesitter.configs")   
+      local config = require("nvim-treesitter.configs")
       config.setup({
-        ensure_installed = {"lua", "javascript", "typescript", "rust", "html", "json", "css"},
+        ensure_installed = { "lua", "javascript", "typescript", "rust", "html", "json", "css", "tsx" },
         highlight = { enable = true },
         indent = { enable = true }
       })
@@ -66,33 +61,90 @@ local plugins = {
       "MunifTanjim/nui.nvim",
       "nvim-tree/nvim-web-devicons",
     },
-    lazy = false, -- neo-tree will lazily load itself
+    lazy = false,
+    config = function()
+      require("neo-tree").setup({
+        window = {
+          position = "right"
+        }
+      })
+    end
   },
   -- Lualine
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function() 
-      require("lualine").setup({})
+    config = function()
+      require("lualine").setup({
+        theme = "codedark"
+      })
+    end
+  },
+  {
+    "kdheepak/lazygit.nvim",
+    lazy = true,
+    cmd = {
+      "LazyGit",
+      "LazyGitConfig",
+      "LazyGitCurrentFile",
+      "LazyGitFilter",
+      "LazyGitFilterCurrentFile",
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    -- setting the keybinding for LazyGit with 'keys' is recommended in
+    -- order to load the plugin when the command is run for the first time
+    keys = {
+      { "<leader>g", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+    }
+  },
+  -- Mason LSP stuff
+  {
+    "mason-org/mason.nvim",
+    config = function()
+      require("mason").setup()
+    end
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    config = function()
+      require("mason-lspconfig").setup({
+        ensure_installed = { "lua_ls" }
+      })
+    end
+  },
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
     end
   }
 }
 
 require("lazy").setup({
   spec = plugins,
-  -- Configure any other settings here. See the documentation for more details.
-  -- colorscheme that will be used when installing plugins.
-  install = { 
-    colorscheme = { "kanagawa" } 
+  install = {
+    colorscheme = { "kanagawa" }
   },
   -- automatically check for plugin updates
   checker = { enabled = true },
 })
- 
--- Telescope 
-local telescope = require("telescope.builtin")
-vim.keymap.set("n", "<C-p>", telescope.find_files, {})
-vim.keymap.set("n", "<leader>fg", telescope.live_grep, {})
 
--- Neotree
+-- Keybinds
+vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
+
+-- Move lines
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+
+-- Telescope finder 
+local telescope = require("telescope.builtin")
+vim.keymap.set("n", "<leader>p", telescope.find_files, {})
+vim.keymap.set("n", "<leader>f", telescope.live_grep, {})
+
+-- Neotree file explorer
 vim.keymap.set("n", "<leader>a", ":Neotree toggle right<CR>", { silent = true })
+
