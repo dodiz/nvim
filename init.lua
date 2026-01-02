@@ -2,6 +2,8 @@ vim.opt.expandtab = true
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
+vim.opt.number = true
+vim.opt.relativenumber = true
 vim.g.mapleader = " "
 
 -- Sync clipboard with OS
@@ -11,9 +13,6 @@ vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
 vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
-
--- Theme
-vim.cmd.colorscheme("koehler")
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -33,6 +32,14 @@ vim.opt.rtp:prepend(lazypath)
 
 local plugins = {
   {
+    "rebelot/kanagawa.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function() 
+      vim.cmd("colorscheme kanagawa-dragon")
+    end
+  },
+  {
     'nvim-telescope/telescope.nvim', tag = '*',
     dependencies = {'nvim-lua/plenary.nvim', { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' }}
   },
@@ -50,6 +57,16 @@ local plugins = {
         indent = { enable = true }
       })
     end
+  },
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    lazy = false, -- neo-tree will lazily load itself
   }
 }
 
@@ -63,8 +80,11 @@ require("lazy").setup({
   -- automatically check for plugin updates
   checker = { enabled = true },
 })
-
+ 
 -- Telescope 
 local telescope = require("telescope.builtin")
 vim.keymap.set("n", "<C-p>", telescope.find_files, {})
 vim.keymap.set("n", "<leader>fg", telescope.live_grep, {})
+
+-- Neotree
+vim.keymap.set("n", "<leader>f", "Neotree toggle right<CR>")
