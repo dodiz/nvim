@@ -67,6 +67,14 @@ local plugins = {
       "nvim-tree/nvim-web-devicons",
     },
     lazy = false, -- neo-tree will lazily load itself
+  },
+  -- Lualine
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function() 
+      require("lualine").setup({})
+    end
   }
 }
 
@@ -75,7 +83,7 @@ require("lazy").setup({
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
   install = { 
-    colorscheme = { "koehler" } 
+    colorscheme = { "kanagawa" } 
   },
   -- automatically check for plugin updates
   checker = { enabled = true },
@@ -87,4 +95,4 @@ vim.keymap.set("n", "<C-p>", telescope.find_files, {})
 vim.keymap.set("n", "<leader>fg", telescope.live_grep, {})
 
 -- Neotree
-vim.keymap.set("n", "<leader>f", "Neotree toggle right<CR>")
+vim.keymap.set("n", "<leader>a", ":Neotree toggle right<CR>", { silent = true })
