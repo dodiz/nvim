@@ -35,8 +35,12 @@ local plugins = {
     end
   },
   {
-    'nvim-telescope/telescope.nvim', tag = '*',
-    dependencies = {'nvim-lua/plenary.nvim', { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' }}
+    'nvim-telescope/telescope.nvim',
+    tag = '0.1.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' }
+    }
   },
   --Treesitter 
   {
@@ -100,7 +104,7 @@ local plugins = {
       { "<leader>g", "<cmd>LazyGit<cr>", desc = "LazyGit" }
     }
   },
-  -- Mason LSP stuff
+  -- Mason LSP
   {
     "mason-org/mason.nvim",
     config = function()
@@ -111,16 +115,25 @@ local plugins = {
     "williamboman/mason-lspconfig.nvim",
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls" }
+        ensure_installed = { "lua_ls", "ts_ls" },
+        handlers = {
+          -- The default handler (applies to everything without a specific config)
+          function(server_name)
+            require("lspconfig")[server_name].setup({})
+          end,
+        }
       })
     end
   },
   {
     "neovim/nvim-lspconfig",
-    config = function()
-    end
+  },
+  {
+    "nvim-telescope/telescope-ui-select.nvim"
   }
 }
+
+-- End plugins
 
 require("lazy").setup({
   spec = plugins,
@@ -132,7 +145,13 @@ require("lazy").setup({
 })
 
 -- Keybinds
+
+-- Save
 vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
+-- Remove selection
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+-- Select all
+vim.keymap.set("n", "<C-a>", "ggVG", { desc = "Select all" })
 
 -- Move lines
 vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
@@ -140,11 +159,17 @@ vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 
--- Telescope finder 
+-- Telescope
 local telescope = require("telescope.builtin")
 vim.keymap.set("n", "<leader>p", telescope.find_files, {})
 vim.keymap.set("n", "<leader>f", telescope.live_grep, {})
+vim.keymap.set("n", "<leader>h", telescope.keymaps, {})
 
 -- Neotree file explorer
 vim.keymap.set("n", "<leader>a", ":Neotree toggle right<CR>", { silent = true })
+
+-- Lsp
+vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+vim.keymap.set("n", "<leader>j", vim.lsp.buf.definition, {})
+vim.keymap.set({ "n", "v" }, "<leader>c", vim.lsp.buf.code_action, {})
 
