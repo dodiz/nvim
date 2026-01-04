@@ -11,137 +11,176 @@ vim.opt.clipboard = "unnamedplus"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
+	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out, "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
 end
 vim.opt.rtp:prepend(lazypath)
 
 local plugins = {
-  {
-    "rebelot/kanagawa.nvim",
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd("colorscheme kanagawa-dragon")
-    end
-  },
-  {
-    'nvim-telescope/telescope.nvim',
-    branch = "0.1.x",
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' }
-    }
-  },
-  --Treesitter 
-  {
-    "nvim-treesitter/nvim-treesitter",
-    branch = 'master',
-    lazy = false,
-    build = ":TSUpdate",
-    config = function()
-      local config = require("nvim-treesitter.configs")
-      config.setup({
-        ensure_installed = { "lua", "javascript", "typescript", "rust", "html", "json", "css", "tsx" },
-        highlight = { enable = true },
-        indent = { enable = true }
-      })
-    end
-  },
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
-    lazy = false,
-    config = function()
-      require("neo-tree").setup({
-        window = {
-          position = "right"
-        }
-      })
-    end
-  },
-  -- Lualine
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      require("lualine").setup({
-        theme = "codedark"
-      })
-    end
-  },
-  {
-    "kdheepak/lazygit.nvim",
-    lazy = true,
-    cmd = {
-      "LazyGit",
-      "LazyGitConfig",
-      "LazyGitCurrentFile",
-      "LazyGitFilter",
-      "LazyGitFilterCurrentFile",
-    },
-    -- optional for floating window border decoration
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    -- setting the keybinding for LazyGit with 'keys' is recommended in
-    -- order to load the plugin when the command is run for the first time
-    keys = {
-      { "<leader>g", "<cmd>LazyGit<cr>", desc = "LazyGit" }
-    }
-  },
-  -- Mason LSP
-  {
-    "mason-org/mason.nvim",
-    config = function()
-      require("mason").setup()
-    end
-  },
-  {
-    "williamboman/mason-lspconfig.nvim",
-    config = function()
-      require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "ts_ls" },
-        handlers = {
-          -- The default handler (applies to everything without a specific config)
-          function(server_name)
-            require("lspconfig")[server_name].setup({})
-          end,
-        }
-      })
-    end
-  },
-  {
-    "neovim/nvim-lspconfig",
-  },
-  {
-    "nvim-telescope/telescope-ui-select.nvim"
-  }
+	{
+		"rebelot/kanagawa.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			vim.cmd("colorscheme kanagawa-dragon")
+		end,
+	},
+	{
+		"nvim-telescope/telescope.nvim",
+		branch = "0.1.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		},
+	},
+	--Treesitter
+	{
+		"nvim-treesitter/nvim-treesitter",
+		branch = "master",
+		lazy = false,
+		build = ":TSUpdate",
+		config = function()
+			local config = require("nvim-treesitter.configs")
+			config.setup({
+				ensure_installed = { "lua", "javascript", "typescript", "rust", "html", "json", "css", "tsx" },
+				highlight = { enable = true },
+				indent = { enable = true },
+			})
+		end,
+	},
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			"nvim-tree/nvim-web-devicons",
+		},
+		lazy = false,
+		config = function()
+			require("neo-tree").setup({
+				window = {
+					position = "right",
+				},
+			})
+		end,
+	},
+	-- Lualine
+	{
+		"nvim-lualine/lualine.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("lualine").setup({
+				theme = "codedark",
+			})
+		end,
+	},
+	{
+		"kdheepak/lazygit.nvim",
+		lazy = true,
+		cmd = {
+			"LazyGit",
+			"LazyGitConfig",
+			"LazyGitCurrentFile",
+			"LazyGitFilter",
+			"LazyGitFilterCurrentFile",
+		},
+		-- optional for floating window border decoration
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		-- setting the keybinding for LazyGit with 'keys' is recommended in
+		-- order to load the plugin when the command is run for the first time
+		keys = {
+			{ "<leader>g", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+		},
+	},
+	-- Mason LSP
+	{
+		"mason-org/mason.nvim",
+		config = function()
+			require("mason").setup()
+		end,
+	},
+	{
+		"williamboman/mason-lspconfig.nvim",
+		config = function()
+			require("mason-lspconfig").setup({
+				ensure_installed = { "lua_ls", "ts_ls" },
+				handlers = {
+					-- The default handler (applies to everything without a specific config)
+					function(server_name)
+						local capabilities = require("cmp_nvim_lsp").default_capabilities()
+						require("lspconfig")[server_name].setup({
+							capabilities = capabilities,
+						})
+					end,
+				},
+			})
+		end,
+	},
+	{
+		"neovim/nvim-lspconfig",
+	},
+	{
+		"stevearc/conform.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("conform").setup({
+				formatters_by_ft = {
+					lua = { "stylua" },
+					javascript = { "prettierd", "prettier", stop_after_first = true },
+					typescript = { "prettierd", "prettier", stop_after_first = true },
+				},
+				format_on_save = {
+					timeout_ms = 500,
+					lsp_fallback = true,
+				},
+			})
+		end,
+	},
+	-- Auto-close brackets/quotes
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = true,
+	},
+	-- Easy comments (gcc to comment line)
+	{
+		"numToStr/Comment.nvim",
+		config = true,
+	},
+	{
+		"mg979/vim-visual-multi",
+		branch = "master",
+		init = function()
+			-- Map Ctrl+d to select next occurrence
+			vim.g.VM_maps = {
+				["Find Under"] = "<C-d>", -- Select word under cursor
+				["Find Subword Under"] = "<C-d>", -- Select visual selection
+			}
+		end,
+	},
 }
 
 -- End plugins
 
 require("lazy").setup({
-  spec = plugins,
-  install = {
-    colorscheme = { "kanagawa" }
-  },
-  -- automatically check for plugin updates
-  checker = { enabled = true },
+	spec = plugins,
+	install = {
+		colorscheme = { "kanagawa" },
+	},
+	-- automatically check for plugin updates
+	checker = { enabled = true },
 })
 
 -- Keybinds
@@ -170,6 +209,7 @@ vim.keymap.set("n", "<leader>a", ":Neotree toggle right<CR>", { silent = true })
 
 -- Lsp
 vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-vim.keymap.set("n", "<leader>j", vim.lsp.buf.definition, {})
-vim.keymap.set({ "n", "v" }, "<leader>c", vim.lsp.buf.code_action, {})
-
+vim.keymap.set("n", "<leader>j", vim.lsp.buf.definition, {
+	desc = "Go to definition",
+}) -- Go to definition
+vim.keymap.set({ "n", "v" }, "<leader>c", vim.lsp.buf.code_action, {}) -- Content assist
