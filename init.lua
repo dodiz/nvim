@@ -159,15 +159,27 @@ local plugins = {
 		"numToStr/Comment.nvim",
 		config = true,
 	},
+	-- Selection of next occurence (CTRL + d)
 	{
 		"mg979/vim-visual-multi",
 		branch = "master",
 		init = function()
-			-- Map Ctrl+d to select next occurrence
 			vim.g.VM_maps = {
 				["Find Under"] = "<C-d>", -- Select word under cursor
 				["Find Subword Under"] = "<C-d>", -- Select visual selection
 			}
+		end,
+	},
+	-- Wrap selected text in parenthesis
+	{
+		"kylechui/nvim-surround",
+		version = "*",
+		event = "VeryLazy",
+		config = function()
+			require("nvim-surround").setup({
+				-- This configuration leaves the default 'S' key in visual mode
+				-- which we will use in the keymaps below.
+			})
 		end,
 	},
 }
@@ -213,3 +225,10 @@ vim.keymap.set("n", "<leader>j", vim.lsp.buf.definition, {
 	desc = "Go to definition",
 }) -- Go to definition
 vim.keymap.set({ "n", "v" }, "<leader>c", vim.lsp.buf.code_action, {}) -- Content assist
+
+-- Sorround selection with parenthesis (), [], {}
+vim.keymap.set("x", "{", "S{", { remap = true })
+vim.keymap.set("x", "(", "S(", { remap = true })
+vim.keymap.set("x", "[", "S[", { remap = true })
+vim.keymap.set("x", "'", "S'", { remap = true })
+vim.keymap.set("x", '"', 'S"', { remap = true })
